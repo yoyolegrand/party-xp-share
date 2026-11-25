@@ -1,0 +1,11 @@
+build/
+.gradle/
+run/
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.log
+.idea/
+out/
+CLAUDE.md
+*.bat
+!gradlew.bat
