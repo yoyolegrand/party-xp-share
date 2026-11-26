@@ -43,7 +43,10 @@ public final class DamageTracker {
 
     public static int trackedCount() { return RECORDS.size(); }
 
-    public static void clear() { RECORDS.clear(); }
+    public static void clear() {
+        RECORDS.clear();
+        SummonOwners.clear();
+    }
 
     // LOWEST so we read the final amount after every other mod (armor, buffs, Wave Survivor blessings...).
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -70,7 +73,13 @@ public final class DamageTracker {
         Entity e = source.getEntity();
         if (e instanceof ServerPlayer p) return real(p);
         if (e != null) {
-            if (Config.PETS_COUNT.get() && e instanceof OwnableEntity own && own.getOwner() instanceof ServerPlayer p) return real(p);
+            if (Config.PETS_COUNT.get()) {
+                if (e instanceof OwnableEntity own && own.getOwner() instanceof ServerPlayer p) return real(p);
+                if (Config.SUMMON_LOOKUP.get()) {
+                    ServerPlayer p = SummonOwners.owner(e);   // summons of other mods (Iron's Spells...)
+                    if (p != null) return real(p);
+                }
+            }
             return null;   // hurt by another mob
         }
         if (Config.CREDIT_INDIRECT.get() && mob.getLastHurtByMob() instanceof ServerPlayer p

@@ -1,4 +1,4 @@
-# Party XP Share — publication 1.0.0
+# Party XP Share — publication
 
 Fiche pour créer les pages CurseForge et Modrinth (textes publics en anglais).
 
@@ -17,11 +17,11 @@ Fiche pour créer les pages CurseForge et Modrinth (textes publics en anglais).
 | Issues | https://github.com/yoyolegrand/party-xp-share/issues |
 | Catégories CurseForge | Server Utility, Miscellaneous (option : Adventure and RPG) |
 | Catégories Modrinth | Utility, Game Mechanics, Management |
-| Dépendance optionnelle | Wave Survivor (« optional dependency » sur les deux sites) |
-| Fichier | `build/libs/partyxpshare-1.20.1-1.0.0.jar` |
+| Dépendances optionnelles | Wave Survivor, FTB Teams (« optional dependency » sur les deux sites) |
+| Fichier | `build/libs/partyxpshare-1.20.1-<version>.jar` |
 | Type de version | Release (ou Beta tant que le test multijoueur n'est pas fait) |
-| Nom de version | `Party XP Share 1.0.0` |
-| Changelog de la version | section `1.0.0` de `CHANGELOG.md` |
+| Nom de version | `Party XP Share <version>` |
+| Changelog de la version | section de la version dans `CHANGELOG.md` |
 
 Modrinth demande aussi les déclarations d'usage d'IA (comme pour Wave Survivor).
 
@@ -46,9 +46,10 @@ Server-side only: install it on the server, players without the mod can still jo
 - **Minimum contribution** (5% by default): one hit and wait gets nothing, the share goes to the others.
 - **Share radius** and **contribution timeout**: you have to stay in the fight.
 - **Damage is capped at the mob's remaining health**: a 500-damage hit on a 2 HP mob counts as 2.
-- **Pets and owned summons** count for their owner; fire, poison and wither count for the last player who hit the mob.
+- **Pets and summons** count for their owner, including summons from other mods like Iron's Spells; fire, poison and wither count for the last player who hit the mob.
 - **Random rounding**: a 5 XP zombie split between 4 players still gives 5 XP on average.
 - **Solo kills are untouched**: vanilla drop, nothing changes.
+- **Only vanilla experience is shared.** Skill XP from mods like Project MMO is not affected.
 
 ## Also included
 - **Group bonus** (off by default): extra XP per additional participant, capped.
@@ -67,6 +68,11 @@ Operators can also change everything in game:
     /partyxp set <option> <value>     e.g. /partyxp set minContribution 10
     /partyxp blacklist add|remove|list <id or #tag>
     /partyxp whitelist add|remove|list <id or #tag>
+
+## FTB Teams compatibility
+Detected automatically (optional). With the default `TEAM_ONLY` mode, only players in the **same team as the killer** share the XP: a stranger who hits the same mob gets nothing. Orb sharing and the Wave Survivor support share follow the same rule. Set `teamMode` to `OFF` to share with everyone.
+
+    /partyxp set teamMode off|team_only
 
 ## Wave Survivor compatibility
 Detected automatically (optional, no hard dependency). Horde mobs, bosses and Kingdom units get their own settings:

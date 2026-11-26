@@ -84,4 +84,38 @@ public class ShareMathTest {
         }
         assertEquals(5.0, total / n, 0.05);
     }
+
+    // ─── FTB Teams (TEAM_ONLY) ───
+    // A et B sont coéquipiers ; C est seul dans son équipe.
+    static boolean team(UUID x, UUID y) {
+        Set<UUID> ab = Set.of(A, B);
+        return x.equals(y) || (ab.contains(x) && ab.contains(y));
+    }
+
+    @Test public void teamReference_isKillerWhenPlayer() {
+        var p = List.of(new Participant(A, 10, false), new Participant(C, 90, false));
+        assertEquals(A, ShareMath.teamReference(p, A));
+    }
+
+    @Test public void teamReference_topDamageWhenNoPlayerKiller() {
+        var p = List.of(new Participant(A, 10, false), new Participant(C, 90, false));
+        assertEquals(C, ShareMath.teamReference(p, null));
+        assertNull(ShareMath.teamReference(List.of(), null));
+    }
+
+    @Test public void teamOnly_teammatesShare_strangerIgnored() {
+        var p = List.of(new Participant(A, 50, true), new Participant(B, 25, false), new Participant(C, 25, false));
+        var kept = ShareMath.sameTeamOnly(p, ShareMath.teamReference(p, A), ShareMathTest::team);
+        var r = map(ShareMath.compute(90, kept, List.of(), s(Mode.DAMAGE), new Random(1)));
+        assertEquals(2, r.size());
+        assertEquals(60, (int) r.get(A));   // 50 / (50 + 25) des 90 XP : les dégâts de C ne comptent plus
+        assertEquals(30, (int) r.get(B));
+        assertNull(r.get(C));
+    }
+
+    @Test public void teamOnly_noCommonTeam_meansVanilla() {
+        var p = List.of(new Participant(A, 50, true), new Participant(C, 50, false));
+        var kept = ShareMath.sameTeamOnly(p, ShareMath.teamReference(p, A), ShareMathTest::team);
+        assertNull(ShareMath.compute(100, kept, List.of(), s(Mode.DAMAGE), new Random(1)));
+    }
 }

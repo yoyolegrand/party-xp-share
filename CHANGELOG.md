@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0 — Teams and summons
+
+- **FTB Teams compatibility** (optional): new `[teams]` config section, `TEAM_ONLY` by default.
+  - Only players in the same team as the killer share the XP; other players are ignored (their damage does not count).
+  - A player without a team shares with nobody: the vanilla drop is kept.
+  - If the killer is not a player (fire, arrow, pet…), the player who dealt the most damage is the team reference.
+  - Orb sharing and the Wave Survivor support share follow the same rule.
+  - `/partyxp set teamMode off|team_only`, `/partyxp set teams true|false`; `/partyxp` shows whether FTB Teams is detected.
+- **Summons from other mods** now count for their caster: Iron's Spells summons (and any mob with a public `getSummoner()` or `getOwner()` returning a player) are credited.
+  New option `killSharing.summonOwnerLookup` (on by default) to turn this off.
+- Documentation: only vanilla experience is shared; skill XP from mods like Project MMO is not affected.
+
 ## 1.0.0 — First release
 
 - **Kill sharing**: a mob's XP is split between every player who hurt it.

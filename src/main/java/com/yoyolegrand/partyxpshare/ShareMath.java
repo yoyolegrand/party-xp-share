@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 /**
  * Pure split logic (no Minecraft classes), so it can be unit-tested.
@@ -111,6 +112,25 @@ public final class ShareMath {
             int amount = randomRound(e.getValue(), rng);
             out.add(new Share(e.getKey(), amount, pct.get(e.getKey()), kind.get(e.getKey())));
         }
+        return out;
+    }
+
+    /**
+     * Team reference for FTB Teams TEAM_ONLY: the killer when it is a player,
+     * otherwise the participant who dealt the most damage. Null when nobody qualifies.
+     */
+    public static UUID teamReference(List<Participant> participants, UUID killer) {
+        if (killer != null) return killer;
+        Participant best = null;
+        for (Participant p : participants) if (best == null || p.damage() > best.damage()) best = p;
+        return best == null ? null : best.id();
+    }
+
+    /** Keeps only the participants in the same team as the reference player (their damage no longer counts). */
+    public static List<Participant> sameTeamOnly(List<Participant> participants, UUID reference,
+                                                 BiPredicate<UUID, UUID> sameTeam) {
+        List<Participant> out = new ArrayList<>();
+        for (Participant p : participants) if (sameTeam.test(reference, p.id())) out.add(p);
         return out;
     }
 

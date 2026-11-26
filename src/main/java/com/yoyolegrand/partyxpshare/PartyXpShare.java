@@ -1,6 +1,7 @@
 package com.yoyolegrand.partyxpshare;
 
 import com.mojang.logging.LogUtils;
+import com.yoyolegrand.partyxpshare.compat.FtbTeamsCompat;
 import com.yoyolegrand.partyxpshare.compat.WaveSurvivorCompat;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -30,6 +31,9 @@ public class PartyXpShare {
     }
 
     private void setup(FMLCommonSetupEvent event) {
-        event.enqueueWork(WaveSurvivorCompat::init);
+        event.enqueueWork(() -> {
+            WaveSurvivorCompat.init();
+            FtbTeamsCompat.init();
+        });
     }
 }

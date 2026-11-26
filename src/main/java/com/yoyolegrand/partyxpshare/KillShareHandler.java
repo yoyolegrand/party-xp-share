@@ -1,6 +1,7 @@
 package com.yoyolegrand.partyxpshare;
 
 import com.yoyolegrand.partyxpshare.ShareMath.Mode;
+import com.yoyolegrand.partyxpshare.compat.FtbTeamsCompat;
 import com.yoyolegrand.partyxpshare.compat.WaveSurvivorCompat;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -59,10 +60,16 @@ public final class KillShareHandler {
             participants.add(new ShareMath.Participant(p.getUUID(), c.damage, p.getUUID().equals(killer)));
         }
 
+        // FTB Teams (TEAM_ONLY): only the killer's teammates share; the others are ignored (damage and share).
+        UUID teamRef = FtbTeamsCompat.active() ? ShareMath.teamReference(participants, killer) : null;
+        if (teamRef != null) participants = ShareMath.sameTeamOnly(participants, teamRef, FtbTeamsCompat::sameTeam);
+
         List<UUID> supporters = new ArrayList<>();
         if (horde && settings.supportSharePercent() > 0) {
             for (ServerPlayer p : XpUtil.playersNear(mob, radius)) {
-                if (!hitters.contains(p.getUUID())) supporters.add(p.getUUID());
+                if (hitters.contains(p.getUUID())) continue;
+                if (teamRef != null && !FtbTeamsCompat.sameTeam(teamRef, p.getUUID())) continue;
+                supporters.add(p.getUUID());
             }
         }
 

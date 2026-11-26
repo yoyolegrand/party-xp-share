@@ -9,3 +9,7 @@ out/
 CLAUDE.md
 *.bat
 !gradlew.bat
+
+# Notes internes (pas dans le dépôt public)
+FICHE_*.md
+docs/MESSAGE_CLAUDE_CHAT_*.md

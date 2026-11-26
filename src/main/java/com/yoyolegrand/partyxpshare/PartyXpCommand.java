@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.yoyolegrand.partyxpshare.compat.FtbTeamsCompat;
 import com.yoyolegrand.partyxpshare.compat.WaveSurvivorCompat;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -44,12 +45,15 @@ public final class PartyXpCommand {
         OPTIONS.put("groupBonus", Config.GROUP_BONUS_PER_PLAYER);
         OPTIONS.put("groupBonusMax", Config.GROUP_BONUS_MAX);
         OPTIONS.put("pets", Config.PETS_COUNT);
+        OPTIONS.put("summonLookup", Config.SUMMON_LOOKUP);
         OPTIONS.put("indirectDamage", Config.CREDIT_INDIRECT);
         OPTIONS.put("delivery", Config.DELIVERY);
         OPTIONS.put("orbSharing", Config.ORB_ENABLED);
         OPTIONS.put("orbMode", Config.ORB_MODE);
         OPTIONS.put("orbBonus", Config.ORB_BONUS);
         OPTIONS.put("orbRadius", Config.ORB_RADIUS);
+        OPTIONS.put("teams", Config.TEAMS_ENABLED);
+        OPTIONS.put("teamMode", Config.TEAM_MODE);
         OPTIONS.put("ws", Config.WS_ENABLED);
         OPTIONS.put("wsMode", Config.WS_MODE);
         OPTIONS.put("wsRadius", Config.WS_RADIUS);
@@ -104,6 +108,12 @@ public final class PartyXpCommand {
         line(s, fr ? "Livraison" : "Delivery", Config.DELIVERY.get().name());
         line(s, fr ? "Partage des orbes" : "Orb sharing", onOff(Config.ORB_ENABLED.get(), fr) + " §7· §f" + Config.ORB_MODE.get()
                 + " §7· §f" + Config.ORB_RADIUS.get() + (fr ? " blocs" : " blocks"));
+        String teams;
+        if (!FtbTeamsCompat.isLoaded()) teams = fr ? "§7non installé" : "§7not installed";
+        else if (!Config.TEAMS_ENABLED.get()) teams = onOff(false, fr);
+        else teams = onOff(true, fr) + " §7· §f" + (Config.TEAM_MODE.get() == Config.TeamMode.TEAM_ONLY
+                ? (fr ? "coéquipiers seulement" : "teammates only") : (fr ? "tout le monde" : "everyone"));
+        line(s, "FTB Teams", teams);
         if (WaveSurvivorCompat.isLoaded()) {
             String wsMode = Config.WS_MODE.get() == Config.ModeOverride.GLOBAL ? (fr ? "comme global" : "same as global") : Config.WS_MODE.get().name();
             line(s, "Wave Survivor", onOff(Config.WS_ENABLED.get(), fr) + " §7· §f" + wsMode + " §7· §f"

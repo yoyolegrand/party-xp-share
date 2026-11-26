@@ -14,6 +14,7 @@ public final class Config {
     public enum Delivery { ORBS, DIRECT }
     public enum OrbMode { SPLIT, BONUS }
     public enum ModeOverride { GLOBAL, DAMAGE, EQUAL, HYBRID }
+    public enum TeamMode { OFF, TEAM_ONLY }
 
     public static final ForgeConfigSpec SPEC;
 
@@ -32,6 +33,7 @@ public final class Config {
     public static final ForgeConfigSpec.DoubleValue GROUP_BONUS_PER_PLAYER;
     public static final ForgeConfigSpec.DoubleValue GROUP_BONUS_MAX;
     public static final ForgeConfigSpec.BooleanValue PETS_COUNT;
+    public static final ForgeConfigSpec.BooleanValue SUMMON_LOOKUP;
     public static final ForgeConfigSpec.BooleanValue CREDIT_INDIRECT;
     public static final ForgeConfigSpec.EnumValue<Delivery> DELIVERY;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> BLACKLIST;
@@ -42,6 +44,10 @@ public final class Config {
     public static final ForgeConfigSpec.EnumValue<OrbMode> ORB_MODE;
     public static final ForgeConfigSpec.DoubleValue ORB_BONUS;
     public static final ForgeConfigSpec.IntValue ORB_RADIUS;
+
+    // teams (FTB Teams)
+    public static final ForgeConfigSpec.BooleanValue TEAMS_ENABLED;
+    public static final ForgeConfigSpec.EnumValue<TeamMode> TEAM_MODE;
 
     // wave survivor
     public static final ForgeConfigSpec.BooleanValue WS_ENABLED;
@@ -84,6 +90,9 @@ public final class Config {
                 .defineInRange("groupBonusMaxPercent", 50.0, 0.0, 1000.0);
         PETS_COUNT = b.comment("Damage dealt by tamed pets / owned summons counts for their owner.")
                 .define("petsCountForOwner", true);
+        SUMMON_LOOKUP = b.comment("Summons from mods that are not 'ownable' (e.g. Iron's Spells): look for a public getSummoner() or getOwner()",
+                        "method and credit the player it returns. Only used when petsCountForOwner is true.")
+                .define("summonOwnerLookup", true);
         CREDIT_INDIRECT = b.comment("Damage with no attacker (fire, poison, wither...) counts for the last player who hit the mob.")
                 .define("creditIndirectDamage", true);
         DELIVERY = b.comment("ORBS   = XP orbs appear on each player (Mending works as usual)",
@@ -105,6 +114,16 @@ public final class Config {
                 .defineInRange("bonusPercent", 25.0, 0.0, 100.0);
         ORB_RADIUS = b.comment("Radius (blocks) around the picker.")
                 .defineInRange("radius", 16, 1, 256);
+        b.pop();
+
+        b.comment("FTB Teams compatibility (only used when FTB Teams is installed).",
+                "Applies to kill sharing, orb sharing and the Wave Survivor support share.").push("teams");
+        TEAMS_ENABLED = b.define("enabled", true);
+        TEAM_MODE = b.comment("OFF       = everybody who helped shares the XP (no team check)",
+                        "TEAM_ONLY = only players in the same team as the killer share the XP; other players are ignored.",
+                        "            A player without a team shares with nobody. If the killer is not a player (fire, arrow, pet...),",
+                        "            the player who dealt the most damage is used as the reference.")
+                .defineEnum("mode", TeamMode.TEAM_ONLY);
         b.pop();
 
         b.comment("Wave Survivor compatibility (only used when Wave Survivor is installed).",

@@ -1,5 +1,6 @@
 package com.yoyolegrand.partyxpshare;
 
+import com.yoyolegrand.partyxpshare.compat.FtbTeamsCompat;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraftforge.event.TickEvent;
@@ -34,6 +35,7 @@ public final class OrbShareHandler {
 
         List<ServerPlayer> others = XpUtil.playersNear(picker, Config.ORB_RADIUS.get());
         others.remove(picker);
+        if (FtbTeamsCompat.active()) others.removeIf(p -> !FtbTeamsCompat.sameTeam(picker.getUUID(), p.getUUID()));
         if (others.isEmpty()) return;
 
         if (Config.ORB_MODE.get() == Config.OrbMode.SPLIT) {

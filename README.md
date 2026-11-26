@@ -14,12 +14,13 @@ Share mob XP with everyone who helped kill it.
 - **Minimum contribution** (5% by default): one hit and wait gets nothing.
 - **Share radius** and **contribution timeout**: you must stay in the fight.
 - **Group bonus** (off by default): extra XP per additional participant.
-- **Pets / summons** count for their owner; fire, poison, etc. count for the last player who hit the mob.
+- **Pets / summons** count for their owner, including summons from other mods (Iron's Spells…); fire, poison, etc. count for the last player who hit the mob.
 - **Delivery**: XP orbs on each player, or direct XP. Mending works in both cases.
 - **Random rounding**: a 5 XP zombie split between 4 players still gives 5 XP on average.
 - **Orb sharing** (off by default): picked-up orbs from any source are split with nearby players (`SPLIT`) or give them a bonus (`BONUS`).
 - Mob **blacklist / whitelist** (ids or `#tags`).
 - Solo kills are untouched (vanilla drop).
+- Only **vanilla experience** is shared. Skill XP from mods like Project MMO is not affected.
 
 Damage tracking is one map lookup per hit, nothing runs every tick.
 
@@ -35,7 +36,15 @@ In game (operators):
 /partyxp blacklist add|remove|list <id or #tag>
 /partyxp whitelist add|remove|list <id or #tag>
 ```
-Options: `enabled language messages killSharing mode killerBonus minContribution radius timeout groupBonus groupBonusMax pets indirectDamage delivery orbSharing orbMode orbBonus orbRadius ws wsMode wsRadius wsMinContribution wsSupport wsGroupBonus wsHideMessages`
+Options: `enabled language messages killSharing mode killerBonus minContribution radius timeout groupBonus groupBonusMax pets summonLookup indirectDamage delivery orbSharing orbMode orbBonus orbRadius teams teamMode ws wsMode wsRadius wsMinContribution wsSupport wsGroupBonus wsHideMessages`
+
+## FTB Teams compatibility
+Detected automatically, no hard dependency. Section `[teams]` of the config:
+- `mode = TEAM_ONLY` (default): only players in the **same team as the killer** share the XP. Other players who hit the mob are ignored, and a player without a team shares with nobody (vanilla drop). If the killer is not a player (fire, arrow, pet…), the player who dealt the most damage is the reference.
+- `mode = OFF`: everybody who helped shares, as without FTB Teams.
+- Orb sharing and the Wave Survivor support share follow the same rule.
+
+In game: `/partyxp set teamMode off|team_only`, `/partyxp set teams true|false`. `/partyxp` shows whether FTB Teams is detected.
 
 ## Wave Survivor compatibility
 Detected automatically, no hard dependency. Horde mobs, bosses and Kingdom units get their own settings:
@@ -46,6 +55,9 @@ Detected automatically, no hard dependency. Horde mobs, bosses and Kingdom units
 - action bar messages hidden during hordes (Wave Survivor uses the action bar)
 
 XP bonuses from Wave Survivor (Shrine gear) are applied before the split.
+
+## Changelog
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## Build
 `./gradlew build` → `build/libs/partyxpshare-1.20.1-<version>.jar`
