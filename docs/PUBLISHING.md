@@ -15,9 +15,9 @@ Fiche pour créer les pages CurseForge et Modrinth (textes publics en anglais).
 | Licence | MIT |
 | Source | https://github.com/yoyolegrand/party-xp-share |
 | Issues | https://github.com/yoyolegrand/party-xp-share/issues |
-| Catégories CurseForge | Server Utility, Miscellaneous (option : Adventure and RPG) |
+| Catégories CurseForge | Server Utility, Adventure and RPG (« Miscellaneous » n'existe pas) |
 | Catégories Modrinth | Utility, Game Mechanics, Management |
-| Dépendances optionnelles | Wave Survivor, FTB Teams (« optional dependency » sur les deux sites) |
+| Dépendances optionnelles | Wave Survivor (CF 1721292), FTB Teams (CF 404468, nommé « FTB Teams (NeoForge) » mais contient la version Forge 1.20.1) |
 | Fichier | `build/libs/partyxpshare-1.20.1-<version>.jar` |
 | Type de version | Release (ou Beta tant que le test multijoueur n'est pas fait) |
 | Nom de version | `Party XP Share <version>` |
@@ -90,6 +90,7 @@ One map lookup per hit; nothing runs every tick except a cleanup every 30 second
 - [ ] Build Gradle OK sur ton PC (`.\gradlew.bat build`, 10 tests JUnit compris)
 - [ ] Test à 2 joueurs ou plus : DAMAGE / EQUAL / HYBRID, kill solo, seuil minimum, Mending
 - [ ] Test dans une horde Wave Survivor 2.1 : log « horde compatibility enabled », part de soutien, messages masqués
-- [ ] Dépôt GitHub créé et poussé, release `v1.0.0` avec le jar
-- [ ] Pages CurseForge et Modrinth créées, jar envoyé
+- [x] Dépôt GitHub créé et poussé, releases `v1.0.0` et `v1.1.0` avec le jar
+- [x] Page CurseForge créée (projet 1830069), 1.0.0 et 1.1.0 envoyées
+- [ ] Page Modrinth créée, jar envoyé
 - [ ] Captures pour la galerie (facultatif : message `+XP` en barre d'action, fichier de config, `/partyxp`)
