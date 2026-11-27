@@ -21,7 +21,7 @@ Share mob XP with everyone who helped kill it.
 - Optional orb sharing: picked-up XP orbs are shared with nearby players.
 - Minimum contribution, share radius, group bonus, pets, mob filters, Mending support.
 - Edit everything in config/partyxpshare-common.toml or in game with /partyxp.
-- Optional FTB Teams support: share XP with your teammates only.
+- Optional FTB Teams support: share XP with your teammates only, including nearby teammates who did not hit the mob.
 - Summons from other mods (Iron's Spells...) count for their caster.
 - Built-in compatibility with Wave Survivor hordes.
 - Only vanilla XP is shared: skill XP from mods like Project MMO is not affected.

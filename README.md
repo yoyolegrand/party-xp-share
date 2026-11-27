@@ -11,7 +11,7 @@ Share mob XP with everyone who helped kill it.
 | `EQUAL` | Same share for every participant: 4 players → 25 XP each |
 | `HYBRID` | The killer gets `killerBonusPercent` (30% by default), the rest is split by damage |
 
-- **Minimum contribution** (5% by default): one hit and wait gets nothing.
+- **Minimum contribution** (5% by default): one hit and wait gets nothing. It only applies to players who hit the mob (see FTB Teams for nearby teammates).
 - **Share radius** and **contribution timeout**: you must stay in the fight.
 - **Group bonus** (off by default): extra XP per additional participant.
 - **Pets / summons** count for their owner, including summons from other mods (Iron's Spells…); fire, poison, etc. count for the last player who hit the mob.
@@ -36,15 +36,16 @@ In game (operators):
 /partyxp blacklist add|remove|list <id or #tag>
 /partyxp whitelist add|remove|list <id or #tag>
 ```
-Options: `enabled language messages killSharing mode killerBonus minContribution radius timeout groupBonus groupBonusMax pets summonLookup indirectDamage delivery orbSharing orbMode orbBonus orbRadius teams teamMode ws wsMode wsRadius wsMinContribution wsSupport wsGroupBonus wsHideMessages`
+Options: `enabled language messages killSharing mode killerBonus minContribution radius timeout groupBonus groupBonusMax pets summonLookup indirectDamage delivery orbSharing orbMode orbBonus orbRadius teams teamMode teammates teammateShare ws wsMode wsRadius wsMinContribution wsSupport wsGroupBonus wsHideMessages`
 
 ## FTB Teams compatibility
 Detected automatically, no hard dependency. Section `[teams]` of the config:
 - `mode = TEAM_ONLY` (default): only players in the **same team as the killer** share the XP. Other players who hit the mob are ignored, and a player without a team shares with nobody (vanilla drop). If the killer is not a player (fire, arrow, pet…), the player who dealt the most damage is the reference.
 - `mode = OFF`: everybody who helped shares, as without FTB Teams.
 - Orb sharing and the Wave Survivor support share follow the same rule.
+- `includeNearbyTeammates = true` (default) — **party share**: when a mob dies, the killer's teammates within the share radius get a share even if they did not hit it. In `EQUAL` mode each of them gets a full equal share; in `DAMAGE` / `HYBRID` they split `teammateSharePercent` (25% by default). The minimum contribution does not apply to them, and a kill with a teammate nearby is never a solo kill. In Wave Survivor hordes this replaces the support share for teammates.
 
-In game: `/partyxp set teamMode off|team_only`, `/partyxp set teams true|false`. `/partyxp` shows whether FTB Teams is detected.
+In game: `/partyxp set teamMode off|team_only`, `/partyxp set teams true|false`, `/partyxp set teammates true|false`, `/partyxp set teammateShare <0-100>`. `/partyxp` shows whether FTB Teams is detected.
 
 ## Wave Survivor compatibility
 Detected automatically, no hard dependency. Horde mobs, bosses and Kingdom units get their own settings:

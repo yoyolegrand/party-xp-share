@@ -118,4 +118,41 @@ public class ShareMathTest {
         var kept = ShareMath.sameTeamOnly(p, ShareMath.teamReference(p, A), ShareMathTest::team);
         assertNull(ShareMath.compute(100, kept, List.of(), s(Mode.DAMAGE), new Random(1)));
     }
+
+    // ─── 1.2 : partage avec les coéquipiers proches (one-shot par A, B coéquipier) ───
+
+    static Settings party(Mode m) { return new Settings(m, 30, 5, 0, 50, 0, 25); }
+
+    static List<UUID> mates(List<UUID> near) { return ShareMath.nearbyTeammates(near, A, ShareMathTest::team); }
+
+    @Test public void party_equal_oneShot_fiftyFifty() {
+        var r = map(ShareMath.compute(100, List.of(new Participant(A, 20, true)), List.of(), mates(List.of(A, B)), party(Mode.EQUAL), new Random(1)));
+        assertEquals(50, (int) r.get(A));
+        assertEquals(50, (int) r.get(B));
+    }
+
+    @Test public void party_damage_oneShot_75_25() {
+        var r = map(ShareMath.compute(100, List.of(new Participant(A, 20, true)), List.of(), mates(List.of(A, B)), party(Mode.DAMAGE), new Random(1)));
+        assertEquals(75, (int) r.get(A));
+        assertEquals(25, (int) r.get(B));
+    }
+
+    @Test public void party_teammateOutOfRange_meansVanilla() {
+        // B hors du rayon : absent de la liste des joueurs proches
+        assertNull(ShareMath.compute(100, List.of(new Participant(A, 20, true)), List.of(), mates(List.of(A)), party(Mode.EQUAL), new Random(1)));
+    }
+
+    @Test public void party_notInTeam_getsNothing() {
+        var m = mates(List.of(A, C));
+        assertTrue(m.isEmpty());
+        assertNull(ShareMath.compute(100, List.of(new Participant(A, 20, true)), List.of(), m, party(Mode.DAMAGE), new Random(1)));
+    }
+
+    @Test public void party_minContribution_doesNotPenaliseTeammate() {
+        // B a frappé 2 % (< 5 %) : il n'est pas attaquant mais garde sa part de coéquipier (EQUAL : part complète)
+        var p = List.of(new Participant(A, 98, true), new Participant(B, 2, false));
+        var r = map(ShareMath.compute(100, p, List.of(), mates(List.of(A, B)), party(Mode.EQUAL), new Random(1)));
+        assertEquals(50, (int) r.get(A));
+        assertEquals(50, (int) r.get(B));
+    }
 }

@@ -54,6 +54,8 @@ public final class PartyXpCommand {
         OPTIONS.put("orbRadius", Config.ORB_RADIUS);
         OPTIONS.put("teams", Config.TEAMS_ENABLED);
         OPTIONS.put("teamMode", Config.TEAM_MODE);
+        OPTIONS.put("teammates", Config.TEAMS_NEARBY);
+        OPTIONS.put("teammateShare", Config.TEAMS_NEARBY_SHARE);
         OPTIONS.put("ws", Config.WS_ENABLED);
         OPTIONS.put("wsMode", Config.WS_MODE);
         OPTIONS.put("wsRadius", Config.WS_RADIUS);
@@ -101,10 +103,11 @@ public final class PartyXpCommand {
             case HYBRID -> (fr ? "hybride (tueur " : "hybrid (killer ") + fmt(Config.KILLER_BONUS.get()) + "%)";
         };
         line(s, fr ? "Partage des kills" : "Kill sharing", onOff(Config.KILL_ENABLED.get(), fr) + " §7· §f" + mode);
-        line(s, fr ? "Contribution mini" : "Min contribution", fmt(Config.MIN_CONTRIBUTION.get()) + "%");
+        line(s, fr ? "Contribution mini" : "Min contribution", fmt(Config.MIN_CONTRIBUTION.get())
+                + (fr ? "% des dégâts §7(sans frapper : voir Équipes)" : "% of damage §7(non-hitters: see Teams)"));
         line(s, fr ? "Rayon / oubli" : "Radius / timeout", radius(Config.SHARE_RADIUS.get(), fr) + " §7· §f" + Config.CONTRIBUTION_TIMEOUT.get() + " s");
         line(s, fr ? "Bonus de groupe" : "Group bonus", "+" + fmt(Config.GROUP_BONUS_PER_PLAYER.get()) + "% / "
-                + (fr ? "joueur (max " : "player (max ") + fmt(Config.GROUP_BONUS_MAX.get()) + "%)");
+                + (fr ? "joueur (max " : "player (max ") + fmt(Config.GROUP_BONUS_MAX.get()) + "%) §7" + (fr ? "(0 % = désactivé)" : "(0% = off)"));
         line(s, fr ? "Livraison" : "Delivery", Config.DELIVERY.get().name());
         line(s, fr ? "Partage des orbes" : "Orb sharing", onOff(Config.ORB_ENABLED.get(), fr) + " §7· §f" + Config.ORB_MODE.get()
                 + " §7· §f" + Config.ORB_RADIUS.get() + (fr ? " blocs" : " blocks"));
@@ -114,6 +117,12 @@ public final class PartyXpCommand {
         else teams = onOff(true, fr) + " §7· §f" + (Config.TEAM_MODE.get() == Config.TeamMode.TEAM_ONLY
                 ? (fr ? "coéquipiers seulement" : "teammates only") : (fr ? "tout le monde" : "everyone"));
         line(s, "FTB Teams", teams);
+        if (FtbTeamsCompat.isLoaded() && Config.TEAMS_ENABLED.get()) {
+            String share = Config.MODE.get() == ShareMath.Mode.EQUAL ? (fr ? "part égale" : "equal share")
+                    : fmt(Config.TEAMS_NEARBY_SHARE.get()) + "%";
+            line(s, fr ? "Équipes" : "Teams", (fr ? "partage avec les coéquipiers proches : " : "teammates nearby share: ")
+                    + onOff(Config.TEAMS_NEARBY.get(), fr) + (Config.TEAMS_NEARBY.get() ? " §7· §f" + share : ""));
+        }
         if (WaveSurvivorCompat.isLoaded()) {
             String wsMode = Config.WS_MODE.get() == Config.ModeOverride.GLOBAL ? (fr ? "comme global" : "same as global") : Config.WS_MODE.get().name();
             line(s, "Wave Survivor", onOff(Config.WS_ENABLED.get(), fr) + " §7· §f" + wsMode + " §7· §f"

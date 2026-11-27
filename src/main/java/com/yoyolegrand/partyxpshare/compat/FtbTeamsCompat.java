@@ -45,6 +45,11 @@ public final class FtbTeamsCompat {
         return loaded && Config.TEAMS_ENABLED.get() && Config.TEAM_MODE.get() == Config.TeamMode.TEAM_ONLY;
     }
 
+    /** True when nearby teammates get a share without hitting (FTB Teams installed, compat on, option on). */
+    public static boolean nearbyTeammates() {
+        return loaded && Config.TEAMS_ENABLED.get() && Config.TEAMS_NEARBY.get();
+    }
+
     /** Same FTB team? A player without a team (personal team) is only in a team with themself. */
     public static boolean sameTeam(UUID a, UUID b) {
         if (a.equals(b)) return true;

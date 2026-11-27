@@ -60,20 +60,33 @@ public final class KillShareHandler {
             participants.add(new ShareMath.Participant(p.getUUID(), c.damage, p.getUUID().equals(killer)));
         }
 
-        // FTB Teams (TEAM_ONLY): only the killer's teammates share; the others are ignored (damage and share).
-        UUID teamRef = FtbTeamsCompat.active() ? ShareMath.teamReference(participants, killer) : null;
+        // FTB Teams reference: the killer, or the top damage dealer.
+        UUID ref = ShareMath.teamReference(participants, killer);
+        // FTB Teams (TEAM_ONLY): only the reference's teammates share; the others are ignored (damage and share).
+        UUID teamRef = FtbTeamsCompat.active() ? ref : null;
         if (teamRef != null) participants = ShareMath.sameTeamOnly(participants, teamRef, FtbTeamsCompat::sameTeam);
+
+        List<ServerPlayer> near = null;
+        // Party share: the reference's teammates in range get a share even without hitting.
+        List<UUID> teammates = List.of();
+        if (ref != null && FtbTeamsCompat.nearbyTeammates()) {
+            near = XpUtil.playersNear(mob, radius);
+            List<UUID> ids = new ArrayList<>();
+            for (ServerPlayer p : near) ids.add(p.getUUID());
+            teammates = ShareMath.nearbyTeammates(ids, ref, FtbTeamsCompat::sameTeam);
+        }
 
         List<UUID> supporters = new ArrayList<>();
         if (horde && settings.supportSharePercent() > 0) {
-            for (ServerPlayer p : XpUtil.playersNear(mob, radius)) {
-                if (hitters.contains(p.getUUID())) continue;
+            if (near == null) near = XpUtil.playersNear(mob, radius);
+            for (ServerPlayer p : near) {
+                if (hitters.contains(p.getUUID()) || teammates.contains(p.getUUID())) continue;
                 if (teamRef != null && !FtbTeamsCompat.sameTeam(teamRef, p.getUUID())) continue;
                 supporters.add(p.getUUID());
             }
         }
 
-        List<ShareMath.Share> shares = ShareMath.compute(xp, participants, supporters, settings, RNG);
+        List<ShareMath.Share> shares = ShareMath.compute(xp, participants, supporters, teammates, settings, RNG);
         if (shares == null) return;   // single recipient: vanilla drop untouched
 
         event.setDroppedExperience(0);
@@ -103,13 +116,14 @@ public final class KillShareHandler {
             support = Config.WS_SUPPORT_SHARE.get();
         }
         return new ShareMath.Settings(mode, Config.KILLER_BONUS.get(), minContribution, groupPer,
-                Config.GROUP_BONUS_MAX.get(), support);
+                Config.GROUP_BONUS_MAX.get(), support, Config.TEAMS_NEARBY_SHARE.get());
     }
 
     private static Component message(ShareMath.Share s, Mode mode) {
         boolean fr = Config.fr();
         String detail = switch (s.kind()) {
             case SUPPORT -> fr ? "soutien" : "support";
+            case TEAMMATE -> mode == Mode.EQUAL ? (fr ? "part égale, équipe" : "equal share, team") : (fr ? "équipe" : "team");
             case KILLER_BONUS_ONLY -> fr ? "coup fatal" : "killing blow";
             case ATTACKER -> mode == Mode.EQUAL
                     ? (fr ? "part égale" : "equal share")

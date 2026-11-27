@@ -43,7 +43,7 @@ Server-side only: install it on the server, players without the mod can still jo
 | **HYBRID** | The killer gets a bonus (30% by default), the rest is split by damage |
 
 ## Fair by design
-- **Minimum contribution** (5% by default): one hit and wait gets nothing, the share goes to the others.
+- **Minimum contribution** (5% by default): one hit and wait gets nothing, the share goes to the others. It only applies to players who hit the mob.
 - **Share radius** and **contribution timeout**: you have to stay in the fight.
 - **Damage is capped at the mob's remaining health**: a 500-damage hit on a 2 HP mob counts as 2.
 - **Pets and summons** count for their owner, including summons from other mods like Iron's Spells; fire, poison and wither count for the last player who hit the mob.
@@ -72,7 +72,11 @@ Operators can also change everything in game:
 ## FTB Teams compatibility
 Detected automatically (optional). With the default `TEAM_ONLY` mode, only players in the **same team as the killer** share the XP: a stranger who hits the same mob gets nothing. Orb sharing and the Wave Survivor support share follow the same rule. Set `teamMode` to `OFF` to share with everyone.
 
+**Party share** (on by default): teammates standing nearby get a share of the kill even if they did not hit the mob. In `EQUAL` mode they get a full equal share; in `DAMAGE` / `HYBRID` they split 25% of the XP (configurable).
+
     /partyxp set teamMode off|team_only
+    /partyxp set teammates true|false
+    /partyxp set teammateShare <0-100>
 
 ## Wave Survivor compatibility
 Detected automatically (optional, no hard dependency). Horde mobs, bosses and Kingdom units get their own settings:

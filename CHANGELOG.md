@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0 — Party share
+
+- **Nearby teammates now get a share** (FTB Teams, new option `[teams] includeNearbyTeammates`, on by default):
+  when a mob dies, the killer's teammates (or the top damage dealer's) within the share radius are added to the split, even if they did not hit it.
+  - `EQUAL`: they get a full equal share.
+  - `DAMAGE` / `HYBRID`: they split `teammateSharePercent` (25% by default).
+  - A kill with a teammate nearby is no longer a solo kill.
+  - In Wave Survivor hordes, this share replaces the support share for teammates.
+- The minimum contribution only applies to players who hit the mob: a teammate who hit a little (or not at all) is never left out.
+- New commands: `/partyxp set teammates true|false`, `/partyxp set teammateShare <0-100>`.
+- `/partyxp` status is clearer: minimum contribution "of damage", a "teammates nearby share" line, and "0% = off" for the group bonus.
+
 ## 1.1.0 — Teams and summons
 
 - **FTB Teams compatibility** (optional): new `[teams]` config section, `TEAM_ONLY` by default.

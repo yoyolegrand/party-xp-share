@@ -48,6 +48,8 @@ public final class Config {
     // teams (FTB Teams)
     public static final ForgeConfigSpec.BooleanValue TEAMS_ENABLED;
     public static final ForgeConfigSpec.EnumValue<TeamMode> TEAM_MODE;
+    public static final ForgeConfigSpec.BooleanValue TEAMS_NEARBY;
+    public static final ForgeConfigSpec.DoubleValue TEAMS_NEARBY_SHARE;
 
     // wave survivor
     public static final ForgeConfigSpec.BooleanValue WS_ENABLED;
@@ -78,13 +80,14 @@ public final class Config {
                 .defineEnum("mode", Mode.DAMAGE);
         KILLER_BONUS = b.comment("HYBRID only: % of the XP reserved for the player who lands the killing blow.")
                 .defineInRange("killerBonusPercent", 30.0, 0.0, 100.0);
-        MIN_CONTRIBUTION = b.comment("Players below this % of the total damage get nothing (stops 'one hit and wait' leeching).")
+        MIN_CONTRIBUTION = b.comment("Players below this % of the total damage get nothing (stops 'one hit and wait' leeching).",
+                        "Only applies to players who hit the mob: nearby FTB teammates are handled by [teams] includeNearbyTeammates.")
                 .defineInRange("minContributionPercent", 5.0, 0.0, 100.0);
         SHARE_RADIUS = b.comment("Max distance (blocks) between a participant and the mob when it dies. 0 = no limit (same dimension).")
                 .defineInRange("shareRadius", 32, 0, 1024);
         CONTRIBUTION_TIMEOUT = b.comment("A player's damage is forgotten if they have not hit the mob for this many seconds.")
                 .defineInRange("contributionTimeoutSeconds", 30, 1, 3600);
-        GROUP_BONUS_PER_PLAYER = b.comment("Extra XP (in %) per additional participant, to reward teamwork. 0 = total XP is never increased.")
+        GROUP_BONUS_PER_PLAYER = b.comment("Extra XP (in %) per additional participant, to reward teamwork. 0 = off (total XP is never increased).")
                 .defineInRange("groupBonusPerPlayerPercent", 0.0, 0.0, 100.0);
         GROUP_BONUS_MAX = b.comment("Cap of the group bonus (in %).")
                 .defineInRange("groupBonusMaxPercent", 50.0, 0.0, 1000.0);
@@ -124,6 +127,14 @@ public final class Config {
                         "            A player without a team shares with nobody. If the killer is not a player (fire, arrow, pet...),",
                         "            the player who dealt the most damage is used as the reference.")
                 .defineEnum("mode", TeamMode.TEAM_ONLY);
+        TEAMS_NEARBY = b.comment("Party share: when a mob dies, the killer's FTB teammates within the share radius get a share",
+                        "even if they did not hit it (minContributionPercent does not apply to them).",
+                        "A kill with a teammate nearby is therefore never a solo kill.")
+                .define("includeNearbyTeammates", true);
+        TEAMS_NEARBY_SHARE = b.comment("DAMAGE / HYBRID: % of the XP split between those nearby teammates.",
+                        "EQUAL: ignored, each of them gets a full equal share.",
+                        "In Wave Survivor hordes it replaces the support share for teammates.")
+                .defineInRange("teammateSharePercent", 25.0, 0.0, 100.0);
         b.pop();
 
         b.comment("Wave Survivor compatibility (only used when Wave Survivor is installed).",
